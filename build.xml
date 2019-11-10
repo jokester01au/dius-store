@@ -28,6 +28,7 @@
     <pathelement location="${lib.dir}/junit-platform-engine-1.4.2.jar"/>
     <pathelement location="${lib.dir}/junit-platform-launcher-1.4.2.jar"/>
     <pathelement location="${lib.dir}/opentest4j-1.1.1.jar"/>
+    <pathelement location="${lib.dir}/assertj-core-3.11.1.jar"/>
   </path>
 
  <path id="test.classpath">
