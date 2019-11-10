@@ -28,7 +28,7 @@ public class MonetaryAmount {
 
     @Override
     public String toString() {
-        return "$" + (cents / 100);
+        return String.format("$%.02f", cents / 100D);
     }
 
     @Override
