@@ -23,7 +23,7 @@ public abstract class PricingRule {
     }
 
     public boolean isActive(Date purchaseDate) {
-        return false;
+        throw new RuntimeException("FIXME - implement");
     }
 
     public abstract MonetaryAmount apply(Product target, Collection<Product> cart);
