@@ -1,0 +1,109 @@
+<project
+	name="HelloProject" default="main" basedir=".">
+	<description>
+		Running junit Test
+	</description>
+
+	<!-- Project Structure -->
+	<property name="jdk.version" value="1.9" />
+	<property name="projectName" value="DiUS Coding Test - Computer Store" />
+    <property name="src.dir" value="src" />
+	<property name="test.dir" value="test" />
+	<property name="it.dir" value="it" />
+	<property name="out.dir" value="out" />
+    <property name="lib.dir" value="lib"/>
+	<property name="test.report.dir" location="${out.dir}/test/report" />
+	<property name="it.report.dir" location="${out.dir}/it/report" />
+	<property name="it.classes.dir" location="${out.dir}/it/classes" />
+	<property name="test.classes.dir" location="${out.dir}/test/classes" />
+	<property name="web.classes.dir" location="${out.dir}/WEB-INF/classes" />
+
+  <path id="junit5.lib.classpath">
+    <pathelement location="${lib.dir}/apiguardian-api-1.0.0.jar"/>
+    <pathelement location="${lib.dir}/junit-jupiter-5.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-jupiter-api-5.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-jupiter-engine-5.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-jupiter-params-5.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-platform-commons-1.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-platform-engine-1.4.2.jar"/>
+    <pathelement location="${lib.dir}/junit-platform-launcher-1.4.2.jar"/>
+    <pathelement location="${lib.dir}/opentest4j-1.1.1.jar"/>
+  </path>
+
+ <path id="test.classpath">
+                <path refid="junit5.lib.classpath"/>
+
+                    <pathelement location="${web.classes.dir}"/>
+
+ </path>
+
+
+	<target name="compile" depends="" description="compile source code">
+		<mkdir dir="${web.classes.dir}" />
+		<javac destdir="${web.classes.dir}" source="${jdk.version}"
+			target="${jdk.version}" includeantruntime="false" >
+			<src path="${src.dir}" />
+		</javac>
+	</target>
+
+
+	<target name="test.compile" depends="compile" description="compile unit test source code">
+		<mkdir dir="${test.classes.dir}" />
+		<javac destdir="${test.classes.dir}" source="${jdk.version}"
+			target="${jdk.version}" includeantruntime="false" classpathref="test.classpath">
+			<src path="${test.dir}" />
+		</javac>
+	</target>
+
+
+	<target name="it.compile" depends="compile" description="compile integration test source code">
+		<mkdir dir="${it.classes.dir}" />
+		<javac destdir="${it.classes.dir}" source="${jdk.version}"
+			target="${jdk.version}" includeantruntime="false" classpathref="test.classpath">
+			<src path="${it.dir}" />
+		</javac>
+	</target>
+
+
+	<target name="test" depends="test.compile" description="run unit tests">
+
+		<mkdir dir="${test.report.dir}" />
+  <junitlauncher>
+                <classpath refid="test.classpath"/>
+                <classpath>
+                    <pathelement location="${test.classes.dir}"/>
+                </classpath>
+            <testclasses outputDir="${test.report.dir}">
+                <fileset dir="${test.classes.dir}"/>
+                <listener type="legacy-plain" sendSysOut="true"/>
+                <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+
+            </testclasses>
+        </junitlauncher>
+	</target>
+
+
+	<target name="it" depends="it.compile,test" description="run integration tests">
+
+		<mkdir dir="${it.report.dir}" />
+            <junitlauncher>
+                <classpath refid="test.classpath"/>
+                <classpath>
+                    <pathelement location="${it.classes.dir}"/>
+            </classpath>
+            <testclasses outputDir="${it.report.dir}">
+                <fileset dir="${it.classes.dir}"/>
+                <listener type="legacy-plain" sendSysOut="true" sendSysErr="true"/>
+                <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+            </testclasses>
+        </junitlauncher>
+	</target>
+
+
+	<target name="clean" description="delete all build and test artefacts">
+		<delete dir="${out.dir}" />
+	</target>
+
+	<target name="main" depends="it" />
+
+</project>
