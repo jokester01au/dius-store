@@ -68,7 +68,7 @@
 	<target name="test" depends="test.compile" description="run unit tests">
 
 		<mkdir dir="${test.report.dir}" />
-  <junitlauncher>
+  <junitlauncher printSummary="true">
                 <classpath refid="test.classpath"/>
                 <classpath>
                     <pathelement location="${test.classes.dir}"/>
@@ -86,15 +86,15 @@
 	<target name="it" depends="it.compile,test" description="run integration tests">
 
 		<mkdir dir="${it.report.dir}" />
-            <junitlauncher>
+            <junitlauncher printSummary="true">
                 <classpath refid="test.classpath"/>
                 <classpath>
                     <pathelement location="${it.classes.dir}"/>
             </classpath>
             <testclasses outputDir="${it.report.dir}">
                 <fileset dir="${it.classes.dir}"/>
-                <listener type="legacy-plain" sendSysOut="true" sendSysErr="true"/>
-                <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+                <listener type="legacy-plain" sendSysOut="true"/>
+                <listener type="legacy-xml" sendSysErr="true" sendSysOut="true" />
             </testclasses>
         </junitlauncher>
 	</target>

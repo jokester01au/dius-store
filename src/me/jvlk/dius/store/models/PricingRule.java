@@ -1,0 +1,62 @@
+package me.jvlk.dius.store.models;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+
+public abstract class PricingRule {
+    private Date startsOn;
+    private Date endsOn;
+
+    public PricingRule(Date startsOn, Date endsOn) {
+        this.startsOn = startsOn;
+        this.endsOn = endsOn;
+    }
+
+    public Date getStartsOn() {
+        return startsOn;
+    }
+
+    public Date getEndsOn() {
+        return endsOn;
+    }
+
+    public boolean isActive(Date purchaseDate) {
+        return false;
+    }
+
+    public abstract MonetaryAmount apply(Product target, Collection<Product> cart);
+
+
+    // FUTURE: authorisedBy - link to a user with the requisite authority to make pricing decisions
+    // FUTURE: customerConstraints - only apply to customers matching the given characteristics (eg. referred from some affiiate, has a history of a certain volume, etc)
+    // FUTURE: voucherCode - the pricing rule only applies if a particular code is provided at checkout
+
+    public static MonetaryAmount applyAll(Collection<PricingRule> rules, Date purchaseDate, Collection<Product> cart) {
+        return null;
+    }
+
+    public static PricingRule fromMap(Map<String, String> fields) {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("valid %1$td-%1$tm-$1$tY to %2$td-%2$tm-%2$tY", startsOn, endsOn);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PricingRule that = (PricingRule) o;
+        return startsOn.equals(that.startsOn) &&
+                endsOn.equals(that.endsOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startsOn, endsOn);
+    }
+}
