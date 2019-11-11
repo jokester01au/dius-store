@@ -3,7 +3,7 @@ package me.jvlk.dius.store.models;
 import java.util.Map;
 import java.util.Objects;
 
-public class Product {
+public class Product implements Priced{
     private String sku;
     private MonetaryAmount rrp;
     private String name;
@@ -46,5 +46,15 @@ public class Product {
     @Override
     public int hashCode() {
         return Objects.hash(sku);
+    }
+
+    @Override
+    public MonetaryAmount getPrice() {
+        return rrp;
+    }
+
+    @Override
+    public Product getProduct() {
+        return this;
     }
 }

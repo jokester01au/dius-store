@@ -23,6 +23,9 @@ public class FreeGift extends PricingRule {
     public FreeGift(Date startsOn, Date endsOn, Product gift, int giftQuantity, Product purchasedProduct, int purchasedQuantity) {
         super(startsOn, endsOn);
 
+        Objects.requireNonNull(gift);
+        Objects.requireNonNull(purchasedProduct);
+        if (giftQuantity <= 0 || purchasedQuantity <= 0) throw new IllegalArgumentException(String.format("Positive integer required for both giftQuantity (%d) and purchasedQuantity (%d)", giftQuantity, purchasedQuantity));
         this.gift = gift;
         this.giftQuantity = giftQuantity;
         this.purchasedProduct = purchasedProduct;

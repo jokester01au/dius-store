@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Immutable value object representing a
  */
-public class MonetaryAmount {
+public class MonetaryAmount implements Comparable<MonetaryAmount> {
     private int cents;
 
     public MonetaryAmount(double value) {
@@ -42,5 +42,11 @@ public class MonetaryAmount {
     @Override
     public int hashCode() {
         return Objects.hash(cents);
+    }
+
+
+    @Override
+    public int compareTo(MonetaryAmount other) {
+        return Integer.compare(this.cents, other.cents);
     }
 }

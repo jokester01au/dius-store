@@ -1,17 +1,43 @@
 package me.jvlk.dius.store.models;
 
+import me.jvlk.dius.store.Utils;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
+import static me.jvlk.dius.store.Utils.zip;
+import static org.assertj.core.util.Arrays.asList;
 
 public abstract class PricingRule {
     private Date startsOn;
     private Date endsOn;
 
     public PricingRule(Date startsOn, Date endsOn) {
-        this.startsOn = startsOn;
-        this.endsOn = endsOn;
+        Objects.requireNonNull(startsOn);
+        Objects.requireNonNull(endsOn);
+        switch (endsOn.compareTo(startsOn)) {
+            default:
+            case 0:
+                throw new IllegalArgumentException(String.format("PricingRule has empty date range: [%s, %s)", startsOn, endsOn));
+            case 1:
+
+                this.startsOn = startsOn;
+                this.endsOn = endsOn;
+                break;
+            case -1:
+                // convenience to swap out of order dates
+                this.startsOn = endsOn;
+                this.endsOn = startsOn;
+                break;
+        }
+
     }
 
     public Date getStartsOn() {
@@ -23,7 +49,8 @@ public abstract class PricingRule {
     }
 
     public boolean isActive(Date purchaseDate) {
-        throw new RuntimeException("FIXME - implement");
+        return (startsOn.before(purchaseDate) || startsOn.equals(purchaseDate)) &&
+                endsOn.after(purchaseDate);
     }
 
     public abstract List<Priced> apply(List<Priced> cart);
@@ -34,7 +61,12 @@ public abstract class PricingRule {
     // FUTURE: voucherCode - the pricing rule only applies if a particular code is provided at checkout
 
     public static List<Priced> applyAll(Collection<PricingRule> rules, Date purchaseDate, List<Priced> cart) {
-        return null;
+        return rules.stream()
+                .filter(rule -> rule.isActive(purchaseDate))
+                .reduce(cart,
+                        (modifiedCart, rule) -> rule.apply(modifiedCart),
+                        (cartA, cartB) -> zip(cartA.stream(), cartB.stream(), Priced::pick).collect(toList())
+                );
     }
 
     public static PricingRule fromMap(Map<String, String> fields) {
