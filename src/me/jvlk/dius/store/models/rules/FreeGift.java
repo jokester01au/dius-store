@@ -20,7 +20,6 @@ import static java.util.Collections.EMPTY_LIST;
 public class FreeGift extends PricingRule {
     private final Product gift;
     private final int giftQuantity;
-    private final Product purchasedProduct;
     private final int purchasedQuantity;
 
     public FreeGift(Date startsOn, Date endsOn, Product gift, Product purchasedProduct) {
@@ -28,21 +27,18 @@ public class FreeGift extends PricingRule {
     }
 
     public FreeGift(Date startsOn, Date endsOn, Product gift, int giftQuantity, Product purchasedProduct, int purchasedQuantity) {
-        super(startsOn, endsOn);
+        super(startsOn, endsOn, purchasedProduct);
 
-        Objects.requireNonNull(gift);
-        Objects.requireNonNull(purchasedProduct);
         if (giftQuantity <= 0 || purchasedQuantity <= 0) throw new IllegalArgumentException(String.format("Positive integer required for both giftQuantity (%d) and purchasedQuantity (%d)", giftQuantity, purchasedQuantity));
-        this.gift = gift;
+        this.gift = Objects.requireNonNull(gift);
         this.giftQuantity = giftQuantity;
-        this.purchasedProduct = purchasedProduct;
         this.purchasedQuantity = purchasedQuantity;
     }
 
     @Override
     public List<Priced> apply(List<Priced> cart) {
         // FUTURE - could do this with fewer iterations
-        long purchaseCount = cart.stream().filter(p -> p.equals(purchasedProduct)).count();
+        long purchaseCount = cart.stream().filter(p -> p.equals(target)).count();
         long initialGiftCount = cart.stream().filter(p -> p.equals(gift)).count();
         long requiredGiftCount = giftQuantity * purchaseCount / purchasedQuantity;
         long giftsToAdd = Math.max(requiredGiftCount - initialGiftCount, 0) ;
@@ -64,7 +60,7 @@ public class FreeGift extends PricingRule {
 
     @Override
     public String toString() {
-        return String.format("Purchase %d of %s, get %d %s free (%s)", purchasedQuantity, purchasedProduct, giftQuantity, gift, super.toString());
+        return String.format("Purchase %d of %s, get %d %s free (%s)", purchasedQuantity, target, giftQuantity, gift, super.toString());
     }
 
     @Override
@@ -72,14 +68,14 @@ public class FreeGift extends PricingRule {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FreeGift freeGift = (FreeGift) o;
-        return giftQuantity == freeGift.giftQuantity &&
+        return super.equals(o) &&
+                giftQuantity == freeGift.giftQuantity &&
                 purchasedQuantity == freeGift.purchasedQuantity &&
-                gift.equals(freeGift.gift) &&
-                purchasedProduct.equals(freeGift.purchasedProduct);
+                gift.equals(freeGift.gift);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gift, giftQuantity, purchasedProduct, purchasedQuantity);
+        return Objects.hash(super.hashCode(), gift, giftQuantity, purchasedQuantity);
     }
 }

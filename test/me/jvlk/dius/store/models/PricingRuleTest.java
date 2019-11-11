@@ -27,12 +27,12 @@ class PricingRuleTest implements Constants  {
     void setUp() {
         this.rulesApplied = new LinkedList<>();
 
-        this.systemUnderTest = create(ONE_WEEK_AGO, ONE_WEEK_LATER);
+        this.systemUnderTest = create(ONE_WEEK_AGO, ONE_WEEK_LATER, ONE_DOLLAR_BILL);
     }
 
-    private PricingRule create(Date startsOn, Date endsOn) {
+    private PricingRule create(Date startsOn, Date endsOn, Product target) {
 
-        return new PricingRule(startsOn, endsOn) {
+        return new PricingRule(startsOn, endsOn, target) {
             @Override
             public List<Priced> apply(List<Priced> cart) {
                 rulesApplied.add(this);
@@ -68,24 +68,25 @@ class PricingRuleTest implements Constants  {
 
     @Test
     void constructor_rejectsNull() {
-        assertThrows(NullPointerException.class, () -> create(null, ONE_WEEK_LATER));
-        assertThrows(NullPointerException.class, () -> create(ONE_WEEK_AGO, null));
+        assertThrows(NullPointerException.class, () -> create(null, ONE_WEEK_LATER, ONE_DOLLAR_BILL));
+        assertThrows(NullPointerException.class, () -> create(ONE_WEEK_AGO, null, ONE_DOLLAR_BILL));
+        assertThrows(NullPointerException.class, () -> create(ONE_WEEK_AGO, ONE_WEEK_LATER, null));
     }
 
     @Test
     void constructor_rejectsEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> create(ONE_WEEK_LATER, ONE_WEEK_LATER));
+        assertThrows(IllegalArgumentException.class, () -> create(ONE_WEEK_LATER, ONE_WEEK_LATER, ONE_DOLLAR_BILL));
     }
 
     @Test
     void constructor_reordersDates() {
-        systemUnderTest = create(ONE_WEEK_LATER, ONE_WEEK_AGO);
+        systemUnderTest = create(ONE_WEEK_LATER, ONE_WEEK_AGO, ONE_DOLLAR_BILL);
         assertTrue(systemUnderTest.isActive(TODAY));
     }
 
     @Test
     void applyAll() {
-        PricingRule otherActiveTest = create(BEFORE, AFTER);
+        PricingRule otherActiveTest = create(BEFORE, AFTER, ONE_DOLLAR_BILL);
         PricingRule.applyAll(asList(otherActiveTest, systemUnderTest), TODAY, EMPTY_LIST);
         assertThat(rulesApplied).containsExactlyInAnyOrder(systemUnderTest, otherActiveTest)
             .as("Both systemUnderTest and otherActiveTest should be applied");
@@ -93,8 +94,8 @@ class PricingRuleTest implements Constants  {
 
     @Test
     void applyAll_filtersInactive() {
-        PricingRule inactiveBefore = create(BEFORE, ONE_WEEK_AGO);
-        PricingRule inactiveAfter = create(AFTER, ONE_WEEK_LATER);
+        PricingRule inactiveBefore = create(BEFORE, ONE_WEEK_AGO, ONE_DOLLAR_BILL);
+        PricingRule inactiveAfter = create(AFTER, ONE_WEEK_LATER, ONE_DOLLAR_BILL);
         PricingRule.applyAll(asList(systemUnderTest, inactiveAfter, inactiveBefore), TODAY, EMPTY_LIST);
         assertThat(rulesApplied).containsExactly(systemUnderTest)
                 .as("PricingRule inactiveBefore and inactiveAfter must be filtered out becasuse they are not active TODAY.");
@@ -103,7 +104,7 @@ class PricingRuleTest implements Constants  {
 
     @Test
     void applyAll_choosesLowestPrice() {
-        PricingRule lowerPrice = new PricingRule(ONE_WEEK_AGO, ONE_WEEK_LATER) {
+        PricingRule lowerPrice = new PricingRule(ONE_WEEK_AGO, ONE_WEEK_LATER, ONE_DOLLAR_BILL) {
             @Override
             public List<Priced> apply(List<Priced> cart) {
                 return cart.stream().map(p -> new PricedProduct(p.getProduct(), p.getPrice().vary(0.5))).collect(toList());

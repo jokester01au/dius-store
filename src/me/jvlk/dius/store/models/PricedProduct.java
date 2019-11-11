@@ -6,15 +6,9 @@ public class PricedProduct implements Priced {
     private final Product product;
     private final MonetaryAmount actualPrice;
 
-    public PricedProduct(Product product) {
-        this(product, product.getRrp());
-    }
-
     public PricedProduct(Product product, MonetaryAmount actualPrice) {
-        Objects.requireNonNull(product);
-        Objects.requireNonNull(actualPrice);
-        this.product = product;
-        this.actualPrice = actualPrice;
+        this.product = Objects.requireNonNull(product);
+        this.actualPrice = Objects.requireNonNull(actualPrice);
     }
 
     public Product getProduct() {

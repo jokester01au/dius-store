@@ -13,15 +13,13 @@ import java.util.Objects;
 import static java.util.stream.Collectors.toList;
 
 public class VolumePricing extends PricingRule {
-    private final Product target;
     private final int minQuantity;
     private final MonetaryAmount discountedPrice;
 
     public VolumePricing(Date startsOn, Date endsOn, Product target, int minQuantity, MonetaryAmount discountedPrice) {
-        super(startsOn, endsOn);
-        this.target = target;
+        super(startsOn, endsOn, target);
         this.minQuantity = minQuantity;
-        this.discountedPrice = discountedPrice;
+        this.discountedPrice = Objects.requireNonNull(discountedPrice);
     }
 
     public VolumePricing(Date startsOn, Date endsOn, Product target, int minQuantity, double discountRatio) {

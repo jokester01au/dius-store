@@ -1,25 +1,21 @@
 package me.jvlk.dius.store.models;
 
-import me.jvlk.dius.store.Utils;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 import static me.jvlk.dius.store.Utils.zip;
-import static org.assertj.core.util.Arrays.asList;
 
 public abstract class PricingRule {
     private Date startsOn;
     private Date endsOn;
+    protected Product target;
 
-    public PricingRule(Date startsOn, Date endsOn) {
+    public PricingRule(Date startsOn, Date endsOn, Product target) {
+        this.target = Objects.requireNonNull(target);
         Objects.requireNonNull(startsOn);
         Objects.requireNonNull(endsOn);
         switch (endsOn.compareTo(startsOn)) {
@@ -84,11 +80,12 @@ public abstract class PricingRule {
         if (o == null || getClass() != o.getClass()) return false;
         PricingRule that = (PricingRule) o;
         return startsOn.equals(that.startsOn) &&
-                endsOn.equals(that.endsOn);
+                endsOn.equals(that.endsOn) &&
+                target.equals(that.target);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startsOn, endsOn);
+        return Objects.hash(startsOn, endsOn, target);
     }
 }

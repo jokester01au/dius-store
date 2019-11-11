@@ -9,9 +9,9 @@ public class Product implements Priced{
     private String name;
 
     public Product(String sku, MonetaryAmount rrp, String name) {
-        this.sku = sku;
-        this.rrp = rrp;
-        this.name = name;
+        this.sku = Objects.requireNonNull(sku);
+        this.rrp = Objects.requireNonNull(rrp);
+        this.name = Objects.requireNonNull(name);
     }
 
     public String getSku() {
@@ -24,10 +24,6 @@ public class Product implements Priced{
 
     public String getName() {
         return name;
-    }
-
-    public static Product fromMap(Map<String, String> fields) {
-        return null;
     }
 
     @Override
