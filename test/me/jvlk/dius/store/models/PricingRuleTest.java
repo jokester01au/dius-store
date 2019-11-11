@@ -11,7 +11,9 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PricingRuleTest {
@@ -32,18 +34,18 @@ class PricingRuleTest {
 
         return new PricingRule(startsOn, endsOn) {
             @Override
-            public MonetaryAmount apply(Product target, Collection<Product> cart) {
+            public List<Priced> apply(List<Priced> cart) {
                 rulesApplied.add(this);
-                return ONE;
+                return cart;
             }
         };
     }
 
-    private static Date BEFORE = new Date(2000, 1, 1);
-    private static Date ONE_WEEK_AGO = new Date(2019, 11, 3);
-    private static Date TODAY = new Date(2019, 11, 10);
-    private static Date ONE_WEEK_LATER = new Date(2019, 11, 17);
-    private static Date AFTER = new Date(2099, 1, 1);
+    private static Date BEFORE = new Date(100, 1, 1);
+    private static Date ONE_WEEK_AGO = new Date(119, 11, 3);
+    private static Date TODAY = new Date(119, 11, 10);
+    private static Date ONE_WEEK_LATER = new Date(119, 11, 17);
+    private static Date AFTER = new Date(199, 1, 1);
 
     @Test
     void isActive_before() {
@@ -71,6 +73,17 @@ class PricingRuleTest {
     }
 
     @Test
+    void constructor_rejectsNull() {
+        assertThrows(NullPointerException.class, () -> create(null, ONE_WEEK_LATER));
+        assertThrows(NullPointerException.class, () -> create(ONE_WEEK_AGO, null));
+    }
+
+    @Test
+    void constructor_rejectsEmpty() {
+        assertThrows(IllegalArgumentException.class, () -> create(ONE_WEEK_LATER, ONE_WEEK_LATER));
+    }
+
+    @Test
     void constructor_reordersDates() {
         systemUnderTest = create(ONE_WEEK_LATER, ONE_WEEK_AGO);
         assertTrue(systemUnderTest.isActive(TODAY));
@@ -79,6 +92,7 @@ class PricingRuleTest {
     @Test
     void applyAll() {
         PricingRule otherActiveTest = create(BEFORE, AFTER);
+        PricingRule.applyAll(asList(otherActiveTest, systemUnderTest), TODAY, EMPTY_LIST);
         assertThat(rulesApplied).containsExactlyInAnyOrder(systemUnderTest, otherActiveTest)
             .as("Both systemUnderTest and otherActiveTest should be applied");
     }
@@ -92,4 +106,24 @@ class PricingRuleTest {
                 .as("PricingRule inactiveBefore and inactiveAfter must be filtered out becasuse they are not active TODAY.");
 
     }
+
+    @Test
+    void applyAll_choosesLowestPrice() {
+        PricingRule lowerPrice = new PricingRule(ONE_WEEK_AGO, ONE_WEEK_LATER) {
+            @Override
+            public List<Priced> apply(List<Priced> cart) {
+                return cart.stream().map(p -> new PricedProduct(p.getProduct(), p.getPrice().vary(0.5))).collect(toList());
+            }
+        };
+        Product product = new Product("odb", ONE, "One Dollar Bill");
+        List<Priced> initial = asList(product);
+        List<Priced> actual = PricingRule.applyAll(asList(lowerPrice, systemUnderTest), TODAY, initial);
+        assertThat(actual)
+                .extracting(Priced::getProduct, Priced::getPrice)
+                .containsExactly(tuple(product, new MonetaryAmount(0.5)));
+
+
+    }
+
+
 }

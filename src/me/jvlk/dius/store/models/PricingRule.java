@@ -26,14 +26,14 @@ public abstract class PricingRule {
         throw new RuntimeException("FIXME - implement");
     }
 
-    public abstract MonetaryAmount apply(Product target, Collection<Product> cart);
+    public abstract List<Priced> apply(List<Priced> cart);
 
 
     // FUTURE: authorisedBy - link to a user with the requisite authority to make pricing decisions
     // FUTURE: customerConstraints - only apply to customers matching the given characteristics (eg. referred from some affiiate, has a history of a certain volume, etc)
     // FUTURE: voucherCode - the pricing rule only applies if a particular code is provided at checkout
 
-    public static MonetaryAmount applyAll(Collection<PricingRule> rules, Date purchaseDate, Collection<Product> cart) {
+    public static List<Priced> applyAll(Collection<PricingRule> rules, Date purchaseDate, List<Priced> cart) {
         return null;
     }
 
@@ -43,7 +43,7 @@ public abstract class PricingRule {
 
     @Override
     public String toString() {
-        return String.format("valid %1$td-%1$tm-$1$tY to %2$td-%2$tm-%2$tY", startsOn, endsOn);
+        return String.format("valid %1$td-%1$tm-%1$tY to %2$td-%2$tm-%2$tY", startsOn, endsOn);
     }
 
     @Override

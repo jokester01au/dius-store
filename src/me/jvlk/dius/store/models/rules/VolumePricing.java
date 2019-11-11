@@ -1,12 +1,15 @@
 package me.jvlk.dius.store.models.rules;
 
 import me.jvlk.dius.store.models.MonetaryAmount;
+import me.jvlk.dius.store.models.Priced;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+
+import static java.util.Collections.EMPTY_LIST;
 
 public class VolumePricing extends PricingRule {
     private final Product target;
@@ -25,8 +28,8 @@ public class VolumePricing extends PricingRule {
     }
 
     @Override
-    public MonetaryAmount apply(Product target, Collection<Product> cart) {
-        return null;
+    public List<Priced> apply(List<Priced> cart) {
+        return EMPTY_LIST;
     }
 
     @Override
