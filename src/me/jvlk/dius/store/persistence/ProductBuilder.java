@@ -45,4 +45,10 @@ public class ProductBuilder implements Builder<Product> {
         if (o.sku != null) this.sku = o.sku;
         return this;
     }
+
+
+    public static void init() {
+        Builders.getInstance().register(Product.class, ProductBuilder::new);
+    }
+
 }
