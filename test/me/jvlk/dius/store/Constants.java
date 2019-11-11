@@ -33,4 +33,11 @@ public interface Constants {
     Priced FREE_ONE_DOLLAR_BILL = new PricedProduct(ONE_DOLLAR_BILL, FREE);
     Priced DISCOUNTED_ELECTRICITY_BILL = new PricedProduct(ELECTRICITY_BILL, ONE);
     Priced SUPER_DISCOUNTED_ELECTRICITY_BILL = new PricedProduct(ELECTRICITY_BILL, HALF);
+
+    String sku = "scoobyDoo";
+    String name = "Scooby";
+    double price = 2.34;
+
+    Product SCOOBY_DOO = new Product(sku, new MonetaryAmount(price), name);
+
 }
