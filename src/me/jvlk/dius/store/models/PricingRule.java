@@ -44,6 +44,10 @@ public abstract class PricingRule {
         return endsOn;
     }
 
+    public Product getTarget() {
+        return target;
+    }
+
     public boolean isActive(Date purchaseDate) {
         return (startsOn.before(purchaseDate) || startsOn.equals(purchaseDate)) &&
                 endsOn.after(purchaseDate);
@@ -88,4 +92,5 @@ public abstract class PricingRule {
     public int hashCode() {
         return Objects.hash(startsOn, endsOn, target);
     }
+
 }
