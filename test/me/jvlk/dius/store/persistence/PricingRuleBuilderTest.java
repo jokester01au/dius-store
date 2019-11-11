@@ -4,12 +4,14 @@ import me.jvlk.dius.store.Constants;
 import me.jvlk.dius.store.models.Priced;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
+import me.jvlk.dius.store.models.rules.FreeGift;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,8 +24,14 @@ public class PricingRuleBuilderTest implements Constants {
 
     @BeforeEach
     void setUp() {
+        systemUnderTest = create();
+    }
+
+    private PricingRuleBuilder create() {
         List<Product> products = asList(ONE_DOLLAR_BILL);
-        systemUnderTest = new PricingRuleBuilder(products);
+        return new PricingRuleBuilder(products) {
+            protected PricingRuleBuilder setArgs(String... args) { return this; }
+        };
     }
 
     @Test
@@ -39,7 +47,7 @@ public class PricingRuleBuilderTest implements Constants {
 
     @Test
     void set_allAtOnce() {
-        PricingRuleBuilder other = new PricingRuleBuilder(asList(ONE_DOLLAR_BILL));
+        PricingRuleBuilder other = create();
         other.set("startsOn", ONE_WEEK_AGO_STRING);
         other.set("endsOn", ONE_WEEK_LATER_STRING);
         other.set("target", ONE_DOLLAR_BILL.getSku());
@@ -78,5 +86,34 @@ public class PricingRuleBuilderTest implements Constants {
         public List<Priced> apply(List<Priced> cart) {
             return null;
         }
+    }
+
+
+public static class APricingRuleBuilder extends PricingRuleBuilder.SubBuilder {
+    private Integer aParameter = null;
+
+    public APricingRuleBuilder(PricingRuleBuilder parent) {
+        super(parent);
+    }
+
+    @Override
+    public PricingRule build(Date startsOn, Date endsOn, Product target) {
+        return new APricingRule(startsOn, endsOn, target,
+                Objects.requireNonNull(aParameter)
+        );
+    }
+
+
+    @Override
+    public PricingRuleBuilder.SubBuilder setArgs(String... args) {
+        if (args.length != 1) throw new IllegalArgumentException(String.format("APricingRule(aParameter) expects 1 argument: %s", Arrays.toString(args)));
+
+        aParameter = Integer.parseInt(args[0]);
+        return this;
+    }
+}
+
+    static {
+        PricingRuleBuilder.registerRuleType("APricingRule", APricingRuleBuilder::new);
     }
 }

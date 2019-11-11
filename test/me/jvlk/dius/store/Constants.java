@@ -8,6 +8,8 @@ import me.jvlk.dius.store.models.Product;
 
 import java.util.Date;
 
+import static me.jvlk.dius.store.Utils.dateToString;
+import static me.jvlk.dius.store.Utils.strToDate;
 import static me.jvlk.dius.store.models.MonetaryAmount.FREE;
 
 /**
@@ -40,7 +42,7 @@ public interface Constants {
 
     Product SCOOBY_DOO = new Product(sku, new MonetaryAmount(price), name);
 
-    String ONE_WEEK_AGO_STRING = String.format("%1$td-%1$tm-%1$tY", ONE_WEEK_AGO);
-    String ONE_WEEK_LATER_STRING = String.format("%1$td-%1$tm-%1$tY", ONE_WEEK_LATER);
+    String ONE_WEEK_AGO_STRING = dateToString(ONE_WEEK_AGO);
+    String ONE_WEEK_LATER_STRING = dateToString(ONE_WEEK_LATER);
 
 }

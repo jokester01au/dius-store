@@ -1,5 +1,9 @@
 package me.jvlk.dius.store;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -100,6 +104,18 @@ public class Utils {
         public <T extends Throwable> T unwrap(Class<T> exceptionType) {
             return (T) getCause();
         }
+    }
+
+    public static Date strToDate(String string) {
+        try {
+            return new SimpleDateFormat("dd-MM-yyyy").parse(string);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(String.format("Could not parse date %s", string));
+        }
+    }
+
+    public static String dateToString(Date date) {
+        return String.format("%1$td-%1$tm-%1$tY", date);
     }
 
 }
