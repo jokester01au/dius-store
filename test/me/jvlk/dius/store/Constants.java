@@ -3,6 +3,7 @@ package me.jvlk.dius.store;
 import me.jvlk.dius.store.models.MonetaryAmount;
 import me.jvlk.dius.store.models.Priced;
 import me.jvlk.dius.store.models.PricedProduct;
+import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import static me.jvlk.dius.store.models.MonetaryAmount.FREE;
  */
 public interface Constants {
 
+    MonetaryAmount HALF = new MonetaryAmount(0.5);
     MonetaryAmount ONE = new MonetaryAmount(1);
     MonetaryAmount TWO = new MonetaryAmount(2);
     MonetaryAmount TWO_MILLION = new MonetaryAmount(2000000);
@@ -29,4 +31,6 @@ public interface Constants {
     Product BILL_BAILEY = new Product("bb", TWO_MILLION, "Mark Robert Bailey");
 
     Priced FREE_ONE_DOLLAR_BILL = new PricedProduct(ONE_DOLLAR_BILL, FREE);
+    Priced DISCOUNTED_ELECTRICITY_BILL = new PricedProduct(ELECTRICITY_BILL, ONE);
+    Priced SUPER_DISCOUNTED_ELECTRICITY_BILL = new PricedProduct(ELECTRICITY_BILL, HALF);
 }
