@@ -10,6 +10,7 @@ public class MonetaryAmount implements Comparable<MonetaryAmount> {
     private int cents;
 
     public MonetaryAmount(double value) {
+        if (value < 0) throw new IllegalArgumentException(String.format("MonetaryAmount must be >= 0 (%f)", value));
         this.cents = (int) (value * 100);
     }
 
@@ -28,7 +29,7 @@ public class MonetaryAmount implements Comparable<MonetaryAmount> {
 
     @Override
     public String toString() {
-        return String.format("$%.02f", cents / 100D);
+        return String.format("$%,.02f", cents / 100D);
     }
 
     @Override
@@ -48,5 +49,13 @@ public class MonetaryAmount implements Comparable<MonetaryAmount> {
     @Override
     public int compareTo(MonetaryAmount other) {
         return Integer.compare(this.cents, other.cents);
+    }
+
+    public double asRatioOf(MonetaryAmount other) {
+        return this.cents * 1.0D / other.cents;
+    }
+
+    public boolean isFree() {
+        return cents <= 0;
     }
 }

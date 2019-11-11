@@ -32,7 +32,7 @@ public class Product implements Priced{
 
     @Override
     public String toString() {
-        return String.format("%s (%s, %sRRP)", name, sku, rrp);
+        return String.format("%s (%s, %s RRP)", name, sku, rrp);
     }
 
     @Override

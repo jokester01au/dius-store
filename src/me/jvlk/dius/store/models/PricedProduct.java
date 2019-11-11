@@ -25,6 +25,16 @@ public class PricedProduct implements Priced {
         return actualPrice;
     }
 
+
+    @Override
+    public String toString() {
+        double ratio = actualPrice.asRatioOf(product.getRrp());
+        int percent = (int) Math.abs(1 - ratio) * 100;
+        return String.format("%s @ %s (%s%% %s)", product, actualPrice, percent,
+                ratio > 1.0D ? "premium" : "discount"
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
