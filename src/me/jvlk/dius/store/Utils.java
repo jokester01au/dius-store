@@ -5,8 +5,11 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static java.util.Spliterator.IMMUTABLE;
 
 public class Utils {
     /**
@@ -54,4 +57,49 @@ public class Utils {
                ? StreamSupport.stream(split, true)
                : StreamSupport.stream(split, false);
     }
+
+    public static<A> Stream<A> stream(Iterator<A> iterator) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, IMMUTABLE), false);
+
+    }
+    public static<A> Stream<A> stream(Supplier<Boolean> hasNext, Supplier<A> next) {
+        return stream(new Iterator<A>() {
+            @Override
+            public boolean hasNext() {
+                return hasNext.get();
+            }
+
+            @Override
+            public A next() {
+                return next.get();
+            }
+        });
+    }
+
+
+    public static class Tuple2<A, B> {
+        public final A a;
+        public final B b;
+
+
+        public Tuple2(A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+    }
+
+    /**
+     * Hacky class to propagate an exception through a stream.
+     * Java doesnt support generic exception clauses so we lose typesafety here
+     */
+    public static class WrappedException extends RuntimeException {
+        public WrappedException(Exception wrapped) {
+            super(wrapped);
+        }
+
+        public <T extends Throwable> T unwrap(Class<T> exceptionType) {
+            return (T) getCause();
+        }
+    }
+
 }
