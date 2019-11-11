@@ -21,12 +21,6 @@ class CsvLoaderTest {
         fail("FIXME - implement test");
     }
 
-    @Test
-    void fromFile() {
-
-        fail("FIXME - implement test");
-    }
-
     private static class TestObject {
         public final int integer;
         public final double decimal;

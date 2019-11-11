@@ -1,26 +1,20 @@
 package me.jvlk.dius.store.persistence;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.List;
 
 /**
+ *
+ * FUTURE - cope with nested quotes
  * @param <P>
  */
 public class CsvLoader<P> implements Loader<P> {
 
-    public CsvLoader(Function<Map<String, String>, P> mapFunction, BufferedReader csvData) {
-
+    public CsvLoader(Class<P> forClass, BufferedReader csvData) {
     }
 
     @Override
-    public Set<P> loadAll() {
-        return null;
-    }
-
-    public static <P> CsvLoader<P> fromFile(Function<Map<String, String>, P> mapFunction, File csvFile) {
+    public List<P> loadAll() {
         return null;
     }
 
