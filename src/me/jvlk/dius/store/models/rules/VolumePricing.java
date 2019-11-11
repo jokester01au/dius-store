@@ -2,6 +2,7 @@ package me.jvlk.dius.store.models.rules;
 
 import me.jvlk.dius.store.models.MonetaryAmount;
 import me.jvlk.dius.store.models.Priced;
+import me.jvlk.dius.store.models.PricedProduct;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
 
 public class VolumePricing extends PricingRule {
     private final Product target;
@@ -24,12 +25,18 @@ public class VolumePricing extends PricingRule {
     }
 
     public VolumePricing(Date startsOn, Date endsOn, Product target, int minQuantity, double discountRatio) {
-        this(startsOn, endsOn, target, minQuantity, null); //target.getRrp().vary(discountRatio));
+        this(startsOn, endsOn, target, minQuantity, target.getRrp().vary(discountRatio));
     }
 
     @Override
     public List<Priced> apply(List<Priced> cart) {
-        return EMPTY_LIST;
+        long productCount = cart.stream().filter(p -> p.getProduct().equals(target)).count();
+        boolean meetsRequirement = productCount >= minQuantity;
+        return cart.stream().map(p ->
+                p.getProduct().equals(target) && meetsRequirement && p.getPrice().compareTo(discountedPrice) > 0 ?
+                        new PricedProduct(p.getProduct(), discountedPrice) :
+                        p
+        ).collect(toList());
     }
 
     @Override
