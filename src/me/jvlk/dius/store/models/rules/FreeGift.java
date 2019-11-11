@@ -1,15 +1,22 @@
 package me.jvlk.dius.store.models.rules;
 
+import me.jvlk.dius.store.models.MonetaryAmount;
 import me.jvlk.dius.store.models.Priced;
+import me.jvlk.dius.store.models.PricedProduct;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
+import org.assertj.core.util.Lists;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import static java.util.Collections.EMPTY_LIST;
 
+/**
+ * FUTURE - dont apply other rules to free gifts
+ */
 public class FreeGift extends PricingRule {
     private final Product gift;
     private final int giftQuantity;
@@ -34,7 +41,25 @@ public class FreeGift extends PricingRule {
 
     @Override
     public List<Priced> apply(List<Priced> cart) {
-        return EMPTY_LIST;
+        // FUTURE - could do this with fewer iterations
+        long purchaseCount = cart.stream().filter(p -> p.equals(purchasedProduct)).count();
+        long initialGiftCount = cart.stream().filter(p -> p.equals(gift)).count();
+        long requiredGiftCount = giftQuantity * purchaseCount / purchasedQuantity;
+        long giftsToAdd = Math.max(requiredGiftCount - initialGiftCount, 0) ;
+
+
+        // FUTURE - do this functionally
+        List<Priced> result = new ArrayList<>((int) (cart.size() + giftsToAdd));
+        for (Priced p : cart) {
+            if (p.getProduct().equals(gift) && ! p.getPrice().isFree() && requiredGiftCount > 0) {
+                requiredGiftCount--;
+                result.add(new PricedProduct(p.getProduct(), MonetaryAmount.FREE));
+            } else {
+                result.add(p);
+            }
+        }
+        while (requiredGiftCount-- > 0) result.add(new PricedProduct(gift, MonetaryAmount.FREE));
+        return result;
     }
 
     @Override
