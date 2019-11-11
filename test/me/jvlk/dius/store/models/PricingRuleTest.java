@@ -1,6 +1,7 @@
 package me.jvlk.dius.store.models;
 
 
+import me.jvlk.dius.store.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PricingRuleTest {
+class PricingRuleTest implements Constants  {
 
     private PricingRule systemUnderTest;
     private Collection<PricingRule> rulesApplied;
 
-    private static MonetaryAmount ONE = new MonetaryAmount(1);
 
     @BeforeEach
     void setUp() {
@@ -40,12 +40,6 @@ class PricingRuleTest {
             }
         };
     }
-
-    private static Date BEFORE = new Date(100, 1, 1);
-    private static Date ONE_WEEK_AGO = new Date(119, 11, 3);
-    private static Date TODAY = new Date(119, 11, 10);
-    private static Date ONE_WEEK_LATER = new Date(119, 11, 17);
-    private static Date AFTER = new Date(199, 1, 1);
 
     @Test
     void isActive_before() {
@@ -115,12 +109,12 @@ class PricingRuleTest {
                 return cart.stream().map(p -> new PricedProduct(p.getProduct(), p.getPrice().vary(0.5))).collect(toList());
             }
         };
-        Product product = new Product("odb", ONE, "One Dollar Bill");
-        List<Priced> initial = asList(product);
+
+        List<Priced> initial = asList(ONE_DOLLAR_BILL);
         List<Priced> actual = PricingRule.applyAll(asList(lowerPrice, systemUnderTest), TODAY, initial);
         assertThat(actual)
                 .extracting(Priced::getProduct, Priced::getPrice)
-                .containsExactly(tuple(product, new MonetaryAmount(0.5)));
+                .containsExactly(tuple(ONE_DOLLAR_BILL, new MonetaryAmount(0.5)));
 
 
     }
