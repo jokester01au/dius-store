@@ -51,7 +51,7 @@ Unfortunately, it was discovered on conclusion of this test and attempting to ex
 
 # Running the tests
 
-The system may be built and exercised via the included [ant](https://ant.apache.org) build (file)[./build.xml]. The junit5 task (JUnitLauncher)[https://ant.apache.org/manual/Tasks/junitlauncher.html] must be present in the ant installation (this is installed with ant on OSX; it is not known if this is the case on other systems).
+The system may be built and exercised via the included [ant](https://ant.apache.org) build [file](./build.xml). The junit5 task [JUnitLauncher](https://ant.apache.org/manual/Tasks/junitlauncher.html) must be present in the ant installation (this is installed with ant on OSX; it is not known if this is the case on other systems).
 
 To install ant, on OSX (using homebrew), execute `brew install ant`. 
 
