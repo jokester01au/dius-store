@@ -1,30 +1,23 @@
 package me.jvlk.dius.store.persistence;
 
+import me.jvlk.dius.store.ProductStore;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static me.jvlk.dius.store.Utils.strToDate;
 
 public class PricingRuleBuilder implements Builder<PricingRule> {
-    private final List<Product> products;
 
     private Date startsOn;
     private Date endsOn;
     private Product target;
     private SubBuilder ruleBuilder;
-
-    public PricingRuleBuilder(List<Product> products) {
-
-        this.products = products;
-    }
 
     @Override
     public final PricingRule build() {
@@ -45,7 +38,7 @@ public class PricingRuleBuilder implements Builder<PricingRule> {
                 this.endsOn = strToDate(value);
                 break;
             case "target":
-                this.target = findProduct(value);
+                this.target = ProductStore.getInstance().findProduct(value);
                 break;
             case "rule":
                 this.ruleBuilder = this.parseRule(value);
@@ -66,9 +59,9 @@ public class PricingRuleBuilder implements Builder<PricingRule> {
         return this;
     }
 
-    private static Map<String, Function<PricingRuleBuilder, SubBuilder>> INSTANTIATORS = new ConcurrentHashMap<>();
+    private static Map<String, Supplier<SubBuilder>> INSTANTIATORS = new ConcurrentHashMap<>();
 
-    public static void registerRuleType(String name, Function<PricingRuleBuilder, SubBuilder> instantiator) {
+    public static void registerRuleType(String name, Supplier<SubBuilder> instantiator) {
         INSTANTIATORS.put(name, instantiator);
     }
 
@@ -76,10 +69,10 @@ public class PricingRuleBuilder implements Builder<PricingRule> {
         String[] nameAndArguiments = spec.split("[()]", 3);
         if (nameAndArguiments.length != 3) throw new IllegalArgumentException(String.format("rule expected of form ruleName([param1, [...]]): %s", spec));
 
-        Function<PricingRuleBuilder, SubBuilder> subBuilder = INSTANTIATORS.get(nameAndArguiments[0]);
+        Supplier<SubBuilder> subBuilder = INSTANTIATORS.get(nameAndArguiments[0]);
         if (subBuilder == null) throw new IllegalArgumentException(String.format("Unknown rule type: %s", spec));
 
-        SubBuilder builder = subBuilder.apply(this);
+        SubBuilder builder = subBuilder.get();
 
         String[] arguments = nameAndArguiments[1].split(",");
         builder.setArgs(arguments);
@@ -88,15 +81,6 @@ public class PricingRuleBuilder implements Builder<PricingRule> {
     }
 
     public static abstract class SubBuilder {
-        private final PricingRuleBuilder parent;
-
-        public SubBuilder(PricingRuleBuilder parent) {
-            this.parent = parent;
-        }
-
-        protected Product findProduct(String sku) {
-            return this.parent.findProduct(sku);
-        }
 
         public abstract SubBuilder setArgs(String...args);
 
@@ -104,14 +88,8 @@ public class PricingRuleBuilder implements Builder<PricingRule> {
 
     }
 
-    private Product findProduct(String sku) {
-        try {
-            return products.stream()
-                    .filter(p -> p.getSku().equals(sku))
-                    .findFirst()
-                    .orElseThrow();
-        } catch (NoSuchElementException e) {
-            throw new IllegalArgumentException(String.format("No product found with sku %s", sku));
-        }
+    public static void init() {
+        Builders.getInstance().register(PricingRule.class, PricingRuleBuilder::new);
     }
+
 }

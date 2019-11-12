@@ -1,10 +1,12 @@
 package me.jvlk.dius.store.persistence;
 
 import me.jvlk.dius.store.Constants;
+import me.jvlk.dius.store.ProductStore;
 import me.jvlk.dius.store.models.Priced;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
 import me.jvlk.dius.store.models.rules.FreeGift;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,14 +24,19 @@ public class PricingRuleBuilderTest implements Constants {
 
     private PricingRuleBuilder systemUnderTest;
 
+    @BeforeAll
+    static void setUpOnce() {
+        // FIXME - can't test robustly with singletons. Need dependency injection
+        ProductStore.getInstance().addProduct(ONE_DOLLAR_BILL);
+    }
+
     @BeforeEach
     void setUp() {
         systemUnderTest = create();
     }
 
     private PricingRuleBuilder create() {
-        List<Product> products = asList(ONE_DOLLAR_BILL);
-        return new PricingRuleBuilder(products) {
+        return new PricingRuleBuilder() {
             protected PricingRuleBuilder setArgs(String... args) { return this; }
         };
     }
@@ -91,10 +98,6 @@ public class PricingRuleBuilderTest implements Constants {
 
 public static class APricingRuleBuilder extends PricingRuleBuilder.SubBuilder {
     private Integer aParameter = null;
-
-    public APricingRuleBuilder(PricingRuleBuilder parent) {
-        super(parent);
-    }
 
     @Override
     public PricingRule build(Date startsOn, Date endsOn, Product target) {

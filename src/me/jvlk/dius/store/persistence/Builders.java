@@ -21,6 +21,7 @@ public class Builders {
 
     public <P> Builder<P> get(Class<P> forClass) {
         Supplier<Builder<?>> supplier = builders.get(forClass);
+        if (supplier == null) throw new IllegalArgumentException(String.format("No builder registered for class %s", forClass));
         Builder<P> builder = (Builder<P>) supplier.get();
         Objects.requireNonNull(builder);
         return builder;
