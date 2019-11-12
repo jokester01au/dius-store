@@ -5,14 +5,11 @@ import me.jvlk.dius.store.models.Priced;
 import me.jvlk.dius.store.models.PricedProduct;
 import me.jvlk.dius.store.models.PricingRule;
 import me.jvlk.dius.store.models.Product;
-import org.assertj.core.util.Lists;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import static java.util.Collections.EMPTY_LIST;
 
 /**
  * FUTURE - dont apply other rules to free gifts
