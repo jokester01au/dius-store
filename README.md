@@ -40,10 +40,15 @@ Because of stipulations regarding external libraries, and time limitations, seve
 
 Due to time constraints, some test suites are missing the full set of corner cases. In particular, the [CSVLoaderTest](test/me/jvlk/dius/store/persistence/CsvLoaderTest.java) requires substantially more testing to be fully production-ready, and [CheckoutTest](test/me/jvlk/dius/store/CheckoutTest.java) is merely a stub. [FreeGiftBuilder](src/me/jvlk/dius/store/persistence/rules/FreeGiftBuilder.java) and [VolumePricingBuilder](src/me/jvlk/dius/store/persistence/rules/VolumePricingBuilder.java) are not covered by tests at all. While these are very simple classes, it is often the simple things that attract errors due to inadequate consideration of edge cases and the like. The core functionality of these classes is covered by the [integration test](it/me/jvlk/dius/store/IntegrationTests.java) but this is not adequate for a production system.
 
+### JUnit 5, Ant 1.10 and Linux
+
+Unfortunately, it was discovered on conclusion of this test and attempting to execute the build on a Linux server, that Ubuntu Xenial by default uses Ant 1.9. This does not include support for JUnit 5 and the [instructions found to add it](https://medium.com/@girishkr/install-apache-ant-1-10-on-ubuntu-16-04-7e249765e1bc) are somewhat involved and consequently have not yet been tested. If you have trouble running my system please inform me and I will investigate in more detail.
+
+
 # Running the tests
 
 The system may be built and exercised via the included [ant](https://ant.apache.org) build (file)[./build.xml]. The junit5 task (JUnitLauncher)[https://ant.apache.org/manual/Tasks/junitlauncher.html] must be present in the ant installation (this is installed with ant on OSX; it is not known if this is the case on other systems).
 
-To install ant, on Mac (using homebrew), execute `brew install ant`. On Linux, perform `apt install ant` (as root).
+To install ant, on OSX (using homebrew), execute `brew install ant`. 
 
 After installation, running `ant` will compile the module, and run integration and unit tests and tests. `ant it` will run the integration tests (NB these have a dependency on unit tests passing) or `ant test` will execute just the unit tests. `ant clean` removes build outputs and test reports.

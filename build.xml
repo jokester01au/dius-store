@@ -5,7 +5,7 @@
 	</description>
 
 	<!-- Project Structure -->
-	<property name="jdk.version" value="1.9" />
+	<property name="jdk.version" value="1.10" />
 	<property name="projectName" value="DiUS Coding Test - Computer Store" />
     <property name="src.dir" value="src" />
 	<property name="test.dir" value="test" />
