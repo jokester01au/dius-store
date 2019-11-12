@@ -1,0 +1,4 @@
+startsOn,endsOn,target,rule
+"12-11-2019","13-11-2019",atv,"FreeGift(atv,1,3)"
+"12-11-2019","13-11-2019",ipd,"VolumePricing(5,499.99)"
+"12-11-2019","13-11-2019",mbp,"FreeGift(vga,1,1)"
