@@ -26,6 +26,10 @@ As required by the coding test guidelines, pricing rules may be altered by editi
 
 The majority of the codebase is implemented in a functional style which is well suited to the type of data operations required by the task, and also lends itself to distributed and reactive architectures which are widely used in modern systems.
 
+### Potential enhancements
+
+Throughout the codebase, the comment tag `FUTURE` has been used to indicate potential enhancements that would likely be necessary or desirable to deploy a production-ready version of this system.
+
 ## Limitations
 
 ### Java is not primarily a functional language
