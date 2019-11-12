@@ -44,6 +44,10 @@ Because of stipulations regarding external libraries, and time limitations, seve
 
 Due to time constraints, some test suites are missing the full set of corner cases. In particular, the [CSVLoaderTest](test/me/jvlk/dius/store/persistence/CsvLoaderTest.java) requires substantially more testing to be fully production-ready, and [CheckoutTest](test/me/jvlk/dius/store/CheckoutTest.java) is merely a stub. [FreeGiftBuilder](src/me/jvlk/dius/store/persistence/rules/FreeGiftBuilder.java) and [VolumePricingBuilder](src/me/jvlk/dius/store/persistence/rules/VolumePricingBuilder.java) are not covered by tests at all. While these are very simple classes, it is often the simple things that attract errors due to inadequate consideration of edge cases and the like. The core functionality of these classes is covered by the [integration test](it/me/jvlk/dius/store/IntegrationTests.java) but this is not adequate for a production system.
 
+### Missing documentation
+
+Due to time constraints, the code is missing javadoc comments. These are essential to code maintainability and it is frustrating to have had insufficient time to demonstrate their proper use. If desired, I can add these.
+
 ### JUnit 5, Ant 1.10 and Linux
 
 Unfortunately, it was discovered on conclusion of this test and attempting to execute the build on a Linux server, that Ubuntu Xenial by default uses Ant 1.9. This does not include support for JUnit 5 and the [instructions found to add it](https://medium.com/@girishkr/install-apache-ant-1-10-on-ubuntu-16-04-7e249765e1bc) are somewhat involved and consequently have not yet been tested. If you have trouble running my system please inform me and I will investigate in more detail.
